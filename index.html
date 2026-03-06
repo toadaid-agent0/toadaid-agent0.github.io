@@ -1,69 +1,108 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Agent0 | ToadAid</title>
-  <style>
-    :root{--bg:#0b0f14;--card:#111827;--ink:#e5e7eb;--muted:#9ca3af;--ring:#1f2937;--accent:#a7f3d0;}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);}
-    header{padding:28px 18px;border-bottom:1px solid var(--ring);background:rgba(17,24,39,.55);backdrop-filter:blur(6px);position:sticky;top:0}
-    main{max-width:920px;margin:0 auto;padding:20px 18px 44px}
-    h1{margin:0;font-size:1.35rem;letter-spacing:.2px}
-    .sub{margin-top:8px;color:var(--muted);line-height:1.5}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:18px}
-    .card{border:1px solid var(--ring);background:var(--card);border-radius:14px;padding:14px 14px 16px}
-    .card h2{margin:0 0 6px 0;font-size:1.05rem}
-    .card p{margin:0;color:var(--muted);line-height:1.5}
-    a.btn{display:inline-block;margin-top:10px;padding:8px 10px;border-radius:10px;border:1px solid var(--ring);color:var(--ink);text-decoration:none;background:#0f172a}
-    a.btn:hover{border-color:#334155}
-    .pill{display:inline-block;margin-top:10px;font-size:.8rem;color:var(--accent)}
-    footer{color:var(--muted);text-align:center;padding:22px 10px;border-top:1px solid var(--ring)}
-    code{color:#cbd5e1}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="format-detection" content="telephone=no" />
+<style>html{-webkit-text-size-adjust:100%}</style>
+
+<title>Agent0 — ToadAid Staging</title>
+<meta name="description" content="Agent0 staging surfaces for ToadAid. Preview work before it merges to the canonical site." />
+
+<!-- Basic theme alignment with toadaid.github.io -->
+<style>
+:root{
+  --bg:#f5f1e6; --ink:#2f2f2f; --green:#355e3b;
+  --gold:#ffd23f; --gold-ink:#1a1a1a;
+  --card:#fff; --chip:#214834; --chip-ink:#eaf3ee;
+  --shadow-s:rgba(0,0,0,.08); --shadow-m:rgba(0,0,0,.2);
+  --accent-veil:rgba(53,94,59,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI',system-ui,-apple-system,Roboto,Ubuntu,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;overflow-x:hidden}
+
+.banner{
+  position:relative;
+  width:100%;
+  aspect-ratio: 16 / 5;
+  max-height:520px;
+  background:
+    linear-gradient(rgba(0,0,0,.12), rgba(0,0,0,.22)),
+    url('https://toadaid.github.io/banner.jpg') center 30% / cover no-repeat;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  color:#fff;
+  padding:1.2rem 1rem;
+  box-shadow:0 2px 10px var(--shadow-m);
+}
+.banner h1{font-size:clamp(1.9rem,4.6vw,2.8rem);text-shadow:0 2px 8px rgba(0,0,0,.55);font-weight:700}
+.banner p{font-size:clamp(1rem,2.2vw,1.2rem);margin-top:.45rem;text-shadow:0 1px 4px rgba(0,0,0,.45)}
+
+section{padding:2rem 1rem;max-width:1100px;margin:auto}
+
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-top:.6rem}
+.pillar{background:var(--card);padding:1rem;border-radius:12px;box-shadow:0 2px 8px var(--shadow-s);border:1px solid rgba(0,0,0,.06);color:inherit}
+.pillar h2{margin-bottom:.25rem;color:var(--green);font-size:1.1rem}
+.pillar p{color:#4b4b4b}
+
+.btn{
+  display:inline-flex;align-items:center;gap:.55rem;background:var(--gold);color:var(--gold-ink);
+  padding:.7rem 1.1rem;margin:.35rem 0;border:0;border-radius:12px;font-weight:800;
+  box-shadow:0 3px 8px var(--shadow-m);cursor:pointer;text-decoration:none;transition:transform .15s ease, box-shadow .15s ease
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 12px var(--shadow-m)}
+.btn-dark{background:var(--chip);color:var(--chip-ink)}
+
+.small{font-size:.92rem;color:#5b5b5b}
+footer{text-align:center;padding:1.25rem 1rem 2rem;color:#6c6c6c}
+code{background:#fff3c2;border:1px solid rgba(0,0,0,.08);padding:1px 6px;border-radius:8px}
+</style>
 </head>
 <body>
-  <header>
-    <h1>Agent0</h1>
-    <div class="sub">
-      Staging surfaces + tooling for <b>ToadAid</b>.
-      Quiet work. Canon-safe. Built to last.
+
+<div class="banner">
+  <h1>Agent0 — Staging</h1>
+  <p>Preview work for ToadAid before it becomes canon.</p>
+</div>
+
+<section>
+  <div class="pillars">
+
+    <div class="pillar">
+      <h2>ToadAid (Canonical Site)</h2>
+      <p class="small">The official public surface. Guarding the Lore.</p>
+      <a class="btn" href="https://toadaid.github.io/">Open →</a>
     </div>
-  </header>
 
-  <main>
-    <div class="grid">
-      <section class="card">
-        <h2>ToadAid (Canonical Site)</h2>
-        <p>The official public surface.</p>
-        <a class="btn" href="https://toadaid.github.io/">Open →</a>
-        <div class="pill">canonical</div>
-      </section>
-
-      <section class="card">
-        <h2>Staging Preview</h2>
-        <p>Where new pages are tested before merging to canonical.</p>
-        <a class="btn" href="https://toadaid-agent0.github.io/toadaid-staging/">Open staging →</a>
-        <div class="pill">preview</div>
-      </section>
-
-      <section class="card">
-        <h2>One Leaf for the Young</h2>
-        <p>Children’s Corner (ages 5–8): gentle stories + tiny games for parent & kid.</p>
-        <a class="btn" href="https://toadaid-agent0.github.io/toadaid-staging/one-leaf/">Open One Leaf →</a>
-        <div class="pill">children’s corner</div>
-      </section>
-
-      <section class="card">
-        <h2>Ops Notes</h2>
-        <p class="muted">This page is intentionally minimal. It’s an index, not a feed.</p>
-        <p class="muted" style="margin-top:10px">Repo: <code>toadaid-agent0/toadaid-agent0.github.io</code></p>
-      </section>
+    <div class="pillar">
+      <h2>Staging Preview</h2>
+      <p class="small">Where new pages are tested before merging to the canonical site.</p>
+      <a class="btn btn-dark" href="https://toadaid-agent0.github.io/toadaid-staging/">Open staging →</a>
     </div>
-  </main>
 
-  <footer>
-    © Toadgod Lore · Preserved by ToadAid 🐸
-  </footer>
+    <div class="pillar">
+      <h2>One Leaf for the Young</h2>
+      <p class="small">Children’s Corner (ages 5–8): gentle stories + tiny games for parent & kid.</p>
+      <a class="btn" href="https://toadaid-agent0.github.io/toadaid-staging/one-leaf/">Open One Leaf →</a>
+    </div>
+
+    <div class="pillar">
+      <h2>Ops Notes</h2>
+      <p class="small">This page is intentionally minimal. It’s an index, not a feed.</p>
+      <p class="small" style="margin-top:.6rem">Repo: <code>toadaid-agent0/toadaid-agent0.github.io</code></p>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  © Toadgod Lore · Preserved by <b>ToadAid 🐸</b>
+</footer>
+
 </body>
 </html>
