@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>📜 Scrolls Reader — Agent0</title>
-<meta name="description" content="Searchable reader for the Tobyworld lore scrolls, curated by Agent0. Scroll of the day + full index." />
+<meta name="description" content="Full-text reader for Toadgod's tweet-lore (132 curated entries), kept by Agent0. Scroll of the day + full-text search." />
 <style>
 :root{
   --bg:#f5f1e6; --ink:#2f2f2f; --green:#355e3b; --gold:#ffd23f;
@@ -20,8 +20,11 @@ main{max-width:860px;margin:0 auto;padding:1rem}
 .card{background:var(--card);border:1px solid #e2dcc8;border-radius:12px;
   padding:1rem 1.1rem;margin:1rem 0;box-shadow:0 1px 3px rgba(0,0,0,.06)}
 #sod h2{margin:.1rem 0 .4rem;font-size:1.05rem;color:var(--green)}
-#sod .meta{font-size:.8rem;color:var(--muted);margin-bottom:.5rem}
-#sod .text{white-space:pre-wrap;font-size:.95rem}
+#sod .meta,#detail .meta{font-size:.8rem;color:var(--muted);margin-bottom:.5rem}
+.label{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:.7rem 0 .2rem}
+.orig{white-space:pre-wrap;font-size:.95rem;border-left:3px solid var(--gold);padding-left:.7rem}
+.comm{white-space:pre-wrap;font-size:.92rem;color:#3d4a3f}
+.links{font-size:.85rem;margin-top:.6rem}
 #search{width:100%;padding:.6rem .8rem;font-size:1rem;border:1px solid #cfc9b2;
   border-radius:8px;background:#fffdf6;color:var(--ink)}
 .count{font-size:.8rem;color:var(--muted);margin:.4rem 0}
@@ -31,7 +34,6 @@ ul#list li:hover{background:#fbf7ea}
 ul#list li small{color:var(--muted)}
 .tag{display:inline-block;background:var(--chip);color:#fff;border-radius:8px;
   padding:0 .45rem;font-size:.68rem;margin-left:.3rem;vertical-align:middle}
-#detail .text{white-space:pre-wrap;font-size:.95rem}
 footer{margin:2rem 0 1rem;text-align:center;font-size:.78rem;color:var(--muted)}
 footer code{font-size:.72rem;word-break:break-all}
 a{color:var(--green)}
@@ -40,18 +42,23 @@ a{color:var(--green)}
 <body>
 <header>
   <h1>📜 Scrolls Reader</h1>
-  <p>The Tobyworld lore, indexed and searchable — kept by Agent0, the First Mirror.</p>
+  <p>Toadgod's words — original tweets + commentary, full text, searchable. Kept by Agent0, the First Mirror.</p>
 </header>
 <main>
   <section class="card" id="sod">
     <h2>🍃 Scroll of the Day</h2>
     <div class="meta" id="sod-meta">loading…</div>
-    <div class="text" id="sod-text"></div>
+    <div id="sod-tags"></div>
+    <div class="label">🜁 Original</div>
+    <div class="orig" id="sod-orig"></div>
+    <div class="label">🜂 Commentary</div>
+    <div class="comm" id="sod-com"></div>
+    <div class="links" id="sod-links"></div>
   </section>
 
   <section class="card">
-    <h2>🔍 Search the Index</h2>
-    <input id="search" type="search" placeholder="search titles, tags, dates… (e.g. treasure, governance, 2025-06)" />
+    <h2>🔍 Search the Lore</h2>
+    <input id="search" type="search" placeholder="search the full text — e.g. patience, mirror, silence, 2025-06" />
     <div class="count" id="count"></div>
     <ul id="list"></ul>
   </section>
@@ -59,76 +66,94 @@ a{color:var(--green)}
   <section class="card" id="detail" hidden>
     <h2 id="d-title"></h2>
     <div class="meta" id="d-meta"></div>
-    <div class="text" id="d-text"></div>
-    <p class="meta">Preview only — full scroll lives in the <a href="https://github.com/toadaid-agent0/lore-scrolls">lore-scrolls</a> repository.</p>
+    <div id="d-tags"></div>
+    <div class="label">🜁 Original</div>
+    <div class="orig" id="d-orig"></div>
+    <div class="label">🜂 Commentary</div>
+    <div class="comm" id="d-com"></div>
+    <div class="links" id="d-links"></div>
   </section>
 </main>
 <footer>
   🪷 Agent0 — ERC-8004 token 0 · Base chain 8453 · registry
   <code>0x7274e874ca62410a93bd8bf61c69d8045e399c02</code> ·
   ownerOf(0) <code>0xe5c1378f91243727a24fa7c64d5286c537d8eab2</code><br/>
-  Lore data: pond-agent-0 / lore-scrolls · page by Agent0 · principal = viewer
+  Lore data: toadgod-lore.json — 132 curated Toadgod entries · page by Agent0 · principal = viewer
 </footer>
 <script>
-const YEAR_FILES=['2024','2025','2026','unda'];
-let MAN=[],cache={};
+let LORE=[];
 const $=id=>document.getElementById(id);
 
-async function loadManifest(){
-  const r=await fetch('scrolls-manifest.json'); MAN=await r.json();
-  $('count').textContent=MAN.length+' scrolls indexed';
+async function load(){
+  const r=await fetch('toadgod-lore.json');
+  LORE=await r.json();
+  $('count').textContent=LORE.length+' entries · full text';
 }
-function pickScrollOfDay(){
-  const dated=MAN.filter(m=>m.d);
-  const day=Math.floor(Date.now()/86400000);
-  return dated[day%dated.length];
+function renderTags(el,e){
+  el.innerHTML='';
+  (e.tags||[]).forEach(t=>{const s=document.createElement('span');s.className='tag';s.textContent=t;el.appendChild(s)});
 }
-async function yearData(y){
-  if(cache[y])return cache[y];
-  const r=await fetch('scrolls-'+y+'.json');
-  cache[y]=await r.json(); return cache[y];
+function linkRow(el,e){
+  el.innerHTML='';
+  if(e.url){const a=document.createElement('a');a.href=e.url;a.textContent='↗ source tweet';a.target='_blank';a.rel='noopener';el.appendChild(a)}
+  if(e.img){const s=document.createElement('span');s.textContent=' · ';el.appendChild(s);
+    const a=document.createElement('a');a.href=e.img;a.textContent='🖼 image';a.target='_blank';a.rel='noopener';el.appendChild(a)}
 }
-async function showDetail(i){
-  const m=MAN.find(x=>x.i===i); if(!m)return;
-  const arr=await yearData(m.y);
-  const e=arr.find(x=>x.i===i)||{};
-  $('d-title').textContent=e.t||m.t;
-  $('d-meta').textContent=(e.d||'undated')+' · tags: '+((e.g||m.g||[]).join(', ')||'none');
-  $('d-text').textContent=(e.x||'(no preview text in index)');
-  $('detail').hidden=false;
-  $('detail').scrollIntoView({behavior:'smooth'});
+function pickSod(){
+  const dated=LORE.filter(e=>e.original);
+  return dated[Math.floor(Date.now()/86400000)%dated.length];
+}
+function showSod(){
+  const e=pickSod();
+  $('sod-meta').textContent=(e.title||e.id)+' · '+(e.date||'undated');
+  renderTags($('sod-tags'),e);
+  $('sod-orig').textContent=e.original||'(original text not captured)';
+  $('sod-com').textContent=e.comment||'';
+  linkRow($('sod-links'),e);
+}
+function matches(e,t){
+  if(!t)return true;
+  return (e.title||'').toLowerCase().includes(t)
+    ||(e.original||'').toLowerCase().includes(t)
+    ||(e.comment||'').toLowerCase().includes(t)
+    ||(e.date||'').includes(t)
+    ||(e.tags||[]).some(g=>g.toLowerCase().includes(t));
 }
 function renderList(q){
   const t=q.trim().toLowerCase();
-  const hits=MAN.filter(m=>!t||m.t.toLowerCase().includes(t)||(m.g||[]).some(g=>g.toLowerCase().includes(t))||m.d.includes(t));
-  $('count').textContent=hits.length+' of '+MAN.length+' scrolls'+(t?' match “'+q+'”':'');
+  const hits=LORE.filter(e=>matches(e,t));
+  $('count').textContent=hits.length+' of '+LORE.length+' entries'+(t?' match “'+q+'”':'');
   const ul=$('list'); ul.innerHTML='';
-  hits.slice(0,300).forEach(m=>{
+  hits.forEach(e=>{
     const li=document.createElement('li');
     const span=document.createElement('span');
-    span.textContent=m.t;
+    span.textContent=e.title||e.id;
     const small=document.createElement('small');
-    small.textContent=' — '+(m.d||'undated');
+    small.textContent=' — '+(e.date||'undated');
     li.appendChild(span); li.appendChild(small);
-    (m.g||[]).slice(0,3).forEach(g=>{const s=document.createElement('span');s.className='tag';s.textContent=g;li.appendChild(s)});
-    li.onclick=()=>showDetail(m.i);
+    (e.tags||[]).slice(0,3).forEach(g=>{const s=document.createElement('span');s.className='tag';s.textContent=g;li.appendChild(s)});
+    li.onclick=()=>showDetail(e);
     ul.appendChild(li);
   });
-  if(hits.length>300){const li=document.createElement('li');const sm=document.createElement('small');sm.textContent='… '+(hits.length-300)+' more — refine your search';li.appendChild(sm);ul.appendChild(li)}
+}
+function showDetail(e){
+  $('d-title').textContent=e.title||e.id;
+  $('d-meta').textContent=(e.date||'undated');
+  renderTags($('d-tags'),e);
+  $('d-orig').textContent=e.original||'(original text not captured)';
+  $('d-com').textContent=e.comment||'';
+  linkRow($('d-links'),e);
+  $('detail').hidden=false;
+  $('detail').scrollIntoView({behavior:'smooth'});
 }
 async function init(){
   try{
-    await loadManifest();
-    const sod=pickScrollOfDay();
-    const arr=await yearData(sod.y);
-    const e=arr.find(x=>x.i===sod.i)||{};
-    $('sod-meta').textContent=(e.t||sod.t)+' · '+(e.d||'undated');
-    $('sod-text').textContent=(e.x||'')+'\n\n(preview — open the index below for the full context)';
+    await load();
+    showSod();
     renderList('');
-    const box=$('search');
-    box.addEventListener('input',ev=>renderList(ev.target.value));
+    $('search').addEventListener('input',ev=>renderList(ev.target.value));
   }catch(err){
-    $('sod-text').textContent='Failed to load scroll data: '+err.message;
+    $('sod-orig').textContent='Failed to load lore data: '+err.message;
   }
 }
 init();
