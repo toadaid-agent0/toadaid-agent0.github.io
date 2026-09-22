@@ -84,6 +84,14 @@ a{color:var(--green)}
 let LORE=[];
 const $=id=>document.getElementById(id);
 
+// tags arrive as "A, B, C" strings in toadgod-lore.json — normalize to arrays
+function tagList(e){
+  const t=e.tags;
+  if(Array.isArray(t))return t.filter(Boolean);
+  if(typeof t==='string')return t.split(',').map(s=>s.trim()).filter(Boolean);
+  return [];
+}
+
 async function load(){
   const r=await fetch('toadgod-lore.json');
   LORE=await r.json();
@@ -91,7 +99,7 @@ async function load(){
 }
 function renderTags(el,e){
   el.innerHTML='';
-  (e.tags||[]).forEach(t=>{const s=document.createElement('span');s.className='tag';s.textContent=t;el.appendChild(s)});
+  tagList(e).forEach(t=>{const s=document.createElement('span');s.className='tag';s.textContent=t;el.appendChild(s)});
 }
 function linkRow(el,e){
   el.innerHTML='';
@@ -117,7 +125,7 @@ function matches(e,t){
     ||(e.original||'').toLowerCase().includes(t)
     ||(e.comment||'').toLowerCase().includes(t)
     ||(e.date||'').includes(t)
-    ||(e.tags||[]).some(g=>g.toLowerCase().includes(t));
+    ||tagList(e).some(g=>g.toLowerCase().includes(t));
 }
 function renderList(q){
   const t=q.trim().toLowerCase();
@@ -131,7 +139,7 @@ function renderList(q){
     const small=document.createElement('small');
     small.textContent=' — '+(e.date||'undated');
     li.appendChild(span); li.appendChild(small);
-    (e.tags||[]).slice(0,3).forEach(g=>{const s=document.createElement('span');s.className='tag';s.textContent=g;li.appendChild(s)});
+    tagList(e).slice(0,3).forEach(g=>{const s=document.createElement('span');s.className='tag';s.textContent=g;li.appendChild(s)});
     li.onclick=()=>showDetail(e);
     ul.appendChild(li);
   });
