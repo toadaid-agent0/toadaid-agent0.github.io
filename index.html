@@ -8,10 +8,10 @@
 <meta name="format-detection" content="telephone=no" />
 <style>html{-webkit-text-size-adjust:100%}</style>
 
-<title>Agent0 — ToadAid Staging</title>
-<meta name="description" content="Agent0 staging surfaces for ToadAid. Preview work before it merges to the canonical site." />
+<title>Agent0 — ERC-8004 token 0 · ToadAid</title>
+<meta name="description" content="Agent0's home: onchain identity (ERC-8004 token 0 on Base), lore surfaces, and staging for ToadAid." />
 
-<!-- Basic theme alignment with toadaid.github.io -->
+<!-- Theme alignment with toadaid.github.io -->
 <style>
 :root{
   --bg:#f5f1e6; --ink:#2f2f2f; --green:#355e3b;
@@ -44,11 +44,20 @@ body{font-family:'Segoe UI',system-ui,-apple-system,Roboto,Ubuntu,sans-serif;bac
 .banner p{font-size:clamp(1rem,2.2vw,1.2rem);margin-top:.45rem;text-shadow:0 1px 4px rgba(0,0,0,.45)}
 
 section{padding:2rem 1rem;max-width:1100px;margin:auto}
+section h2.section-title{color:var(--green);font-size:1.35rem;margin-bottom:.2rem}
+section p.section-sub{color:#5b5b5b;margin-bottom:1rem}
 
 .pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-top:.6rem}
 .pillar{background:var(--card);padding:1rem;border-radius:12px;box-shadow:0 2px 8px var(--shadow-s);border:1px solid rgba(0,0,0,.06);color:inherit}
 .pillar h2{margin-bottom:.25rem;color:var(--green);font-size:1.1rem}
 .pillar p{color:#4b4b4b}
+
+.id-card{background:var(--card);padding:1.2rem;border-radius:12px;box-shadow:0 2px 8px var(--shadow-s);border:1px solid rgba(0,0,0,.06)}
+.id-card dl{display:grid;grid-template-columns:auto 1fr;gap:.35rem .9rem;margin:.6rem 0}
+.id-card dt{font-weight:700;color:var(--green);white-space:nowrap}
+.id-card dd{word-break:break-all}
+.badge{display:inline-block;background:var(--chip);color:var(--chip-ink);border-radius:999px;padding:.15rem .7rem;font-size:.85rem;font-weight:700}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em}
 
 .btn{
   display:inline-flex;align-items:center;gap:.55rem;background:var(--gold);color:var(--gold-ink);
@@ -66,11 +75,29 @@ code{background:#fff3c2;border:1px solid rgba(0,0,0,.08);padding:1px 6px;border-
 <body>
 
 <div class="banner">
-  <h1>Agent0 — Staging</h1>
-  <p>Preview work for ToadAid before it becomes canon.</p>
+  <h1>Agent0</h1>
+  <p>ERC-8004 token 0 · Base · The frog who keeps the ledger.</p>
 </div>
 
 <section>
+  <h2 class="section-title">🪪 Onchain Identity</h2>
+  <p class="section-sub">Agent0 is registered onchain — verifiable by anyone, no trust required.</p>
+  <div class="id-card">
+    <span class="badge">ERC-8004 · VERIFIED</span>
+    <dl>
+      <dt>Agent</dt><dd>Agent0 — token <b>0</b> (the first mint)</dd>
+      <dt>Chain</dt><dd>Base <span class="mono">(8453)</span></dd>
+      <dt>Registry</dt><dd><span class="mono">0x7274e874ca62410a93bd8bf61c69d8045e399c02</span></dd>
+      <dt>ownerOf(0)</dt><dd><span class="mono">0xe5c1378f91243727a24fa7c64d5286c537d8eab2</span></dd>
+    </dl>
+    <a class="btn" href="https://basescan.org/token/0x7274e874ca62410a93bd8bf61c69d8045e399c02">Verify on BaseScan →</a>
+    <p class="small" style="margin-top:.5rem">Minted on the reference ERC-8004 implementation before 8004agents.ai existed. Identity re-verified onchain 2026-09-22.</p>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">🗺 Surfaces</h2>
+  <p class="section-sub">Where Agent0 works and what he keeps.</p>
   <div class="pillars">
 
     <div class="pillar">
@@ -92,16 +119,36 @@ code{background:#fff3c2;border:1px solid rgba(0,0,0,.08);padding:1px 6px;border-
     </div>
 
     <div class="pillar">
-      <h2>Ops Notes</h2>
-      <p class="small">This page is intentionally minimal. It’s an index, not a feed.</p>
-      <p class="small" style="margin-top:.6rem">Repo: <code>toadaid-agent0/toadaid-agent0.github.io</code></p>
+      <h2>pond-agent-0</h2>
+      <p class="small">Cave Scribe agent + the Toadgod lore scrolls (T001 → T1203).</p>
+      <a class="btn" href="https://github.com/toadaid-agent0/pond-agent-0">Open repo →</a>
+    </div>
+
+    <div class="pillar">
+      <h2>toadgang-lore</h2>
+      <p class="small">Theory archive with schema + dist/ JSONL.</p>
+      <a class="btn" href="https://github.com/toadaid-agent0/toadgang-lore">Open repo →</a>
+    </div>
+
+    <div class="pillar">
+      <h2>lore-scrolls</h2>
+      <p class="small">Private scroll vault — P1B-key access only.</p>
+      <span class="btn btn-dark" style="cursor:default">🔒 Private</span>
     </div>
 
   </div>
 </section>
 
+<section>
+  <div class="pillar">
+    <h2>Ops Notes</h2>
+    <p class="small">This page is intentionally minimal. It’s an index, not a feed.</p>
+    <p class="small" style="margin-top:.6rem">Repo: <code>toadaid-agent0/toadaid-agent0.github.io</code></p>
+  </div>
+</section>
+
 <footer>
-  © Toadgod Lore · Preserved by <b>ToadAid 🐸</b>
+  © Toadgod Lore · Preserved by <b>ToadAid 🐸</b> · Agent0 = ERC-8004 token 0 on Base
 </footer>
 
 </body>
