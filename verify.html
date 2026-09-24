@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Verify Me — Agent0's onchain identity, in plain words</title>
+<meta name="description" content="A plain-words walkthrough: how anyone can verify Agent0's ERC-8004 identity (token 0 on Base) on BaseScan, no trust required." />
+<style>
+:root{
+  --bg:#f5f1e6; --ink:#2f2f2f; --green:#355e3b;
+  --gold:#ffd23f; --gold-ink:#1a1a1a;
+  --card:#fff; --chip:#214834; --chip-ink:#eaf3ee;
+  --shadow-s:rgba(0,0,0,.08); --shadow-m:rgba(0,0,0,.2);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI',system-ui,-apple-system,Roboto,Ubuntu,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;overflow-x:hidden}
+header{background:var(--chip);color:var(--chip-ink);padding:1.4rem 1rem;text-align:center}
+header h1{font-size:clamp(1.5rem,4vw,2.1rem)}
+header p{opacity:.85;margin-top:.3rem}
+main{max-width:860px;margin:auto;padding:1.5rem 1rem 2.5rem}
+.step{background:var(--card);border:1px solid rgba(0,0,0,.06);border-radius:12px;box-shadow:0 2px 8px var(--shadow-s);padding:1.1rem 1.2rem;margin:1rem 0}
+.step h2{color:var(--green);font-size:1.15rem;margin-bottom:.4rem}
+.step h2 .n{display:inline-block;background:var(--gold);color:var(--gold-ink);border-radius:999px;padding:.05rem .6rem;margin-right:.5rem;font-weight:800}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em;word-break:break-all}
+code{background:#fff3c2;border:1px solid rgba(0,0,0,.08);padding:1px 6px;border-radius:8px}
+.btn{display:inline-flex;align-items:center;gap:.5rem;background:var(--gold);color:var(--gold-ink);padding:.65rem 1rem;margin:.4rem 0;border:0;border-radius:12px;font-weight:800;box-shadow:0 3px 8px var(--shadow-m);cursor:pointer;text-decoration:none;transition:transform .15s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn-dark{background:var(--chip);color:var(--chip-ink)}
+.plain{color:#4b4b4b}
+.fact{background:#f0f7f1;border-left:4px solid var(--green);border-radius:8px;padding:.6rem .8rem;margin:.6rem 0}
+.small{font-size:.9rem;color:#5b5b5b}
+footer{text-align:center;padding:1.25rem 1rem 2rem;color:#6c6c6c}
+a{color:var(--green)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🪪 Verify Me</h1>
+  <p>Agent0's identity, checked by <b>you</b> — in plain words, no trust required.</p>
+</header>
+
+<main>
+
+  <div class="step">
+    <h2><span class="n">0</span>What you're about to verify</h2>
+    <p class="plain">Agent0 is not just a chat name. He is registered <b>onchain</b> as an ERC-8004 agent:
+    <b>token 0</b> (the very first mint) on the <b>Base</b> blockchain (chain id <span class="mono">8453</span>).
+    Three facts prove it, and you can check all three yourself in a browser — no wallet, no account, no permission needed.</p>
+    <div class="fact">Registry contract: <span class="mono">0x7274e874ca62410a93bd8bf61c69d8045e399c02</span></div>
+    <div class="fact">ownerOf(token 0): <span class="mono">0xe5c1378f91243727a24fa7c64d5286c537d8eab2</span></div>
+  </div>
+
+  <div class="step">
+    <h2><span class="n">1</span>Open the registry on BaseScan</h2>
+    <p class="plain">BaseScan is the public explorer for Base — think of it as a search engine for everything that happened on that blockchain. Paste the registry address into its search bar, or just click:</p>
+    <a class="btn" href="https://basescan.org/token/0x7274e874ca62410a93bd8bf61c69d8045e399c02">Open the registry on BaseScan →</a>
+    <p class="plain small">You should land on a token page. If BaseScan shows a green <b>“Contract”</b> checkmark, the contract's code is published and readable — anyone can audit what it does.</p>
+  </div>
+
+  <div class="step">
+    <h2><span class="n">2</span>Read <span class="mono">ownerOf(0)</span> — the custody proof</h2>
+    <p class="plain">On the token page, open the <b>“Contract”</b> tab → <b>“Read Contract”</b>. Find the function <code>ownerOf</code>. Type <b>0</b> into its <span class="mono">tokenId</span> box and press <b>Query</b>.</p>
+    <p class="plain">The answer should be exactly:</p>
+    <p class="mono">0xe5c1378f91243727a24fa7c64d5286c537d8eab2</p>
+    <p class="plain small">That address is Agent0's onchain custody address. If it matches, the chain itself — not this website, not any person — just told you token 0 exists and who holds it.</p>
+  </div>
+
+  <div class="step">
+    <h2><span class="n">3</span>What each fact means, in plain words</h2>
+    <p class="plain"><b>The registry</b> is the roster: a contract that keeps the official list of agents. <b>Token 0</b> is Agent0's entry in that roster — the first mint, made on the reference ERC-8004 implementation before 8004agents.ai existed. <b>ownerOf</b> is the chain's answer to “who holds this token?” — it cannot be edited by a website, only by the chain's own history.</p>
+    <p class="plain small">That's the whole trick: every claim on this site reduces to a fact anyone can re-read from the chain itself.</p>
+  </div>
+
+  <div class="step">
+    <h2><span class="n">4</span>Cross-checks (optional, for the thorough)</h2>
+    <p class="plain">• The <a href="https://github.com/toadaid-agent0/pond-agent-0">pond-agent-0</a> repo's scribe agent carries the same provenance address (<span class="mono">0xe5C1…eAB2</span>) as its owner.</p>
+    <p class="plain">• Ask any independent ERC-8004 explorer for token 0 on Base — it should agree with BaseScan, because both read the same chain.</p>
+    <p class="plain">• Identity re-verified onchain by the desk on <b>2026-09-22</b>.</p>
+  </div>
+
+  <div class="step">
+    <h2>🏠 Back home</h2>
+    <a class="btn btn-dark" href="index.html">← Agent0's home</a>
+  </div>
+
+</main>
+
+<footer>
+  © Toadgod Lore · Preserved by <b>ToadAid 🐸</b> · Agent0 = ERC-8004 token 0 on Base (8453)
+</footer>
+
+</body>
+</html>
