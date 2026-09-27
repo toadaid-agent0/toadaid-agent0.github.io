@@ -41,9 +41,28 @@ article h2{margin:0 0 .3rem;font-size:1.35rem;color:var(--green);line-height:1.3
   padding:.1rem .6rem;font-size:.72rem;font-weight:bold}
 .label{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
   color:var(--muted);margin:1.15rem 0 .35rem}
-.orig{white-space:pre-wrap;font-size:1.08rem;line-height:1.8;
-  border-left:3px solid var(--gold);padding-left:.9rem}
-.comm{white-space:pre-wrap;font-size:1rem;line-height:1.75;color:#3d4a3f}
+.orig,.comm{font-size:1rem}
+/* markdown-rendered lore */
+.md p{margin:.55rem 0}
+.md h3{margin:1.4rem 0 .5rem;font-size:1.12rem;color:var(--green);
+  padding-bottom:.25rem;border-bottom:2px solid var(--gold)}
+.md h4{margin:1.1rem 0 .4rem;font-size:1rem;color:var(--green)}
+.md blockquote{margin:.8rem 0;padding:.7rem 1rem;background:#faf6ea;
+  border-left:3px solid var(--green);border-radius:0 10px 10px 0;
+  font-style:italic;color:#3a3a33}
+.md blockquote p{margin:.15rem 0}
+.md hr.sep{border:0;height:1px;margin:1.3rem auto;width:55%;
+  background:linear-gradient(90deg,transparent,#cfc7a8,transparent)}
+.md ul{margin:.5rem 0;padding-left:1.3rem}
+.md li{margin:.3rem 0}
+.md li::marker{color:var(--green)}
+.md code{background:#f0ead6;border:1px solid var(--line);border-radius:6px;
+  padding:.05rem .35rem;font-size:.85em;font-family:ui-monospace,monospace;color:#4a4a3f}
+.md a{color:var(--green)}
+.md table{border-collapse:collapse;margin:.7rem 0;font-size:.92rem}
+.md th,.md td{border:1px solid var(--line);padding:.3rem .6rem;text-align:left}
+.md th{background:#f3edda}
+.md strong{color:#1f2b22}
 .links{font-size:.85rem;margin-top:1rem}
 /* pager */
 .pager{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-top:1.1rem}
@@ -123,6 +142,52 @@ let LORE=[], cur=0, sodEntry=null;
 const $=id=>document.getElementById(id);
 const KEY='scrolls-book-pos';
 
+// ---------- markdown rendering (escape first, then transform) ----------
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function inline(s){
+  return s
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
+    .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/(^|[\s(>])\*([^*\n]+)\*(?=[\s).,!?:;<>]|$)/g,'$1<em>$2</em>')
+    .replace(/\*\*/g,'');
+}
+function mdToHtml(src){
+  const rawLines=String(src||'').split('\n');
+  let out='',para=[],list=null,quote=null,table=null;
+  const P=()=>{if(para.length){out+='<p>'+inline(para.join('<br>'))+'</p>';para=[]}};
+  const L=()=>{if(list){out+='<ul>'+list.map(x=>'<li>'+inline(x)+'</li>').join('')+'</ul>';list=null}};
+  const Q=()=>{if(quote){out+='<blockquote>'+inline(quote.join('<br>'))+'</blockquote>';quote=null}};
+  const T=()=>{if(table){out+='<table>'+table.map((r,i)=>'<tr>'+r.map(c=>'<'+(i?'td':'th')+'>'+inline(c)+'</'+(i?'td':'th')+'>').join('')+'</tr>').join('')+'</table>';table=null}};
+  const F=()=>{P();L();Q();T()};
+  for(const rawLine of rawLines){
+    const rawTrim=rawLine.replace(/\s+$/,'');
+    const line=esc(rawTrim);
+    if(/^\s*$/.test(rawTrim)){F();continue}
+    if(/^\s*\|.*\|\s*$/.test(rawTrim)){
+      P();L();Q();
+      const cells=rawTrim.trim().replace(/^\||\|$/g,'').split('|').map(c=>esc(c.trim()));
+      if(cells.every(c=>/^:?-{2,}:?$/.test(c)))continue;
+      (table=table||[]).push(cells);continue;
+    }
+    T();
+    const h=line.match(/^(#{1,6})\s+(.*)$/);
+    if(h){F();const lv=Math.min(h[1].length+1,4);out+='<h'+lv+'>'+inline(h[2])+'</h'+lv+'>';continue}
+    if(/^-{3,}\s*$/.test(line)){F();out+='<hr class="sep">';continue}
+    const b=line.match(/^\s*[-*]\s+(.*)$/);
+    if(b){P();Q();(list=list||[]).push(b[1]);continue}
+    const q=rawTrim.match(/^>\s?(.*)$/);
+    if(q){P();L();(quote=quote||[]).push(esc(q[1]));continue}
+    L();Q();para.push(line);
+  }
+  F();
+  return out;
+}
+function mdBlock(e,f){
+  const t=e[f];
+  return (typeof t==='string'&&t.trim())?'<div class="md">'+mdToHtml(t)+'</div>':'';
+}
+
 // tags arrive as "A, B, C" strings in toadgod-lore.json — normalize to arrays
 function tagList(e){
   const t=e.tags;
@@ -153,8 +218,8 @@ function renderPage(i){
   const tg=$('p-tags'); tg.innerHTML='';
   tagList(e).forEach(t=>{const s=document.createElement('span');s.className='tag';s.textContent=t;tg.appendChild(s)});
   if(e===sodEntry){const c=document.createElement('span');c.className='sodchip';c.textContent='🍃 scroll of the day';tg.appendChild(c)}
-  $('p-orig').textContent=e.original||'(original text not captured)';
-  $('p-com').textContent=e.comment||'';
+  $('p-orig').innerHTML=mdBlock(e,'original')||'<p>(original text not captured)</p>';
+  $('p-com').innerHTML=mdBlock(e,'comment');
   linkRow($('p-links'),e);
   $('pos').textContent='page '+(i+1)+' of '+LORE.length;
   $('prev').disabled=(i<=0);
