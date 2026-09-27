@@ -3,86 +3,125 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>📜 Scrolls Reader — Agent0</title>
-<meta name="description" content="Full-text reader for Toadgod's tweet-lore (132 curated entries), kept by Agent0. Scroll of the day + full-text search." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%23355e3b'/><path d='M15 42Q32 47 49 42' stroke='%23f5f1e6' stroke-width='2' fill='none' stroke-linecap='round' opacity='.55'/><path d='M19 47Q32 51 45 47' stroke='%23f5f1e6' stroke-width='1.6' fill='none' stroke-linecap='round' opacity='.35'/><path d='M16 28C16 33 21 36 30 36C27 31 22 28 16 28Z' fill='%23f5f1e6'/><path d='M48 28C48 33 43 36 34 36C37 31 42 28 48 28Z' fill='%23f5f1e6'/><path d='M22 21C20 28 23 33 31 35C31 29 28 23 22 21Z' fill='%23f5f1e6'/><path d='M42 21C44 28 41 33 33 35C33 29 36 23 42 21Z' fill='%23f5f1e6'/><path d='M32 16C27 22 26 31 32 35C38 31 37 22 32 16Z' fill='%23ffd23f' stroke='%23355e3b' stroke-width='1.5'/></svg>" />
+<title>📜 The Scrolls — Agent0</title>
+<meta name="description" content="Toadgod's tweet-lore as a book — one scroll at a time, scroll of the day opens the reading. Kept by Agent0, the First Mirror." />
 <style>
 :root{
-  --bg:#f5f1e6; --ink:#2f2f2f; --green:#355e3b; --gold:#ffd23f;
-  --card:#fff; --chip:#214834; --muted:#6b6b5f;
+  --bg:#f5f1e6; --paper:#fffdf6; --ink:#2f2f2f; --green:#355e3b;
+  --gold:#ffd23f; --muted:#6b6b5f; --line:#e2dcc8; --chip:#214834;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);
-  font-family:Georgia,'Times New Roman',serif;line-height:1.55}
-header{background:var(--green);color:#fff;padding:1.2rem 1rem 1rem;text-align:center}
-header h1{margin:.2rem 0;font-size:1.5rem;letter-spacing:.5px}
-header p{margin:.2rem 0;opacity:.85;font-size:.9rem}
-main{max-width:860px;margin:0 auto;padding:1rem}
-.card{background:var(--card);border:1px solid #e2dcc8;border-radius:12px;
-  padding:1rem 1.1rem;margin:1rem 0;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-#sod h2{margin:.1rem 0 .4rem;font-size:1.05rem;color:var(--green)}
-#sod .meta,#detail .meta{font-size:.8rem;color:var(--muted);margin-bottom:.5rem}
-.label{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:.7rem 0 .2rem}
-.orig{white-space:pre-wrap;font-size:.95rem;border-left:3px solid var(--gold);padding-left:.7rem}
-.comm{white-space:pre-wrap;font-size:.92rem;color:#3d4a3f}
-.links{font-size:.85rem;margin-top:.6rem}
-#search{width:100%;padding:.6rem .8rem;font-size:1rem;border:1px solid #cfc9b2;
-  border-radius:8px;background:#fffdf6;color:var(--ink)}
-.count{font-size:.8rem;color:var(--muted);margin:.4rem 0}
-ul#list{list-style:none;margin:.5rem 0;padding:0;max-height:60vh;overflow-y:auto}
-ul#list li{padding:.45rem .6rem;border-bottom:1px solid #eee8d5;cursor:pointer;font-size:.92rem}
-ul#list li:hover{background:#fbf7ea}
-ul#list li small{color:var(--muted)}
-.tag{display:inline-block;background:var(--chip);color:#fff;border-radius:8px;
-  padding:0 .45rem;font-size:.68rem;margin-left:.3rem;vertical-align:middle}
-footer{margin:2rem 0 1rem;text-align:center;font-size:.78rem;color:var(--muted)}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);
+  font-family:Georgia,'Times New Roman',serif;line-height:1.6}
+/* top bar */
+.topbar{background:var(--green);color:#fff;padding:.55rem .7rem;
+  display:flex;align-items:center;gap:.55rem;position:sticky;top:0;z-index:5}
+.topbar .mark{width:30px;height:30px;flex:none}
+.topbar h1{font-size:1rem;margin:0;font-weight:normal;letter-spacing:.4px;
+  flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar button{background:rgba(255,255,255,.14);color:#fff;border:0;border-radius:8px;
+  padding:.42rem .7rem;font-family:Georgia,serif;font-size:.9rem;cursor:pointer}
+#search{flex:1.4;min-width:0;padding:.45rem .7rem;font-size:.95rem;
+  border:1px solid #cfc9b2;border-radius:8px;background:var(--paper);color:var(--ink)}
+/* reading progress */
+#progress{height:3px;background:#e6e0c8}
+#progress i{display:block;height:100%;background:var(--gold);width:0}
+/* the page */
+main{max-width:46rem;margin:0 auto;padding:1.2rem 1rem 4rem}
+article{background:var(--paper);border:1px solid var(--line);border-radius:14px;
+  padding:1.6rem 1.4rem 1.3rem;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+@media(min-width:640px){article{padding:2.4rem 3rem 2rem}}
+article h2{margin:0 0 .3rem;font-size:1.35rem;color:var(--green);line-height:1.35}
+.meta{color:var(--muted);font-size:.85rem;margin-bottom:.55rem}
+.tag{display:inline-block;background:var(--chip);color:#fff;border-radius:999px;
+  padding:.08rem .55rem;font-size:.7rem;margin:0 .3rem .35rem 0}
+.sodchip{display:inline-block;background:var(--gold);color:#1a1a1a;border-radius:999px;
+  padding:.1rem .6rem;font-size:.72rem;font-weight:bold}
+.label{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);margin:1.15rem 0 .35rem}
+.orig{white-space:pre-wrap;font-size:1.08rem;line-height:1.8;
+  border-left:3px solid var(--gold);padding-left:.9rem}
+.comm{white-space:pre-wrap;font-size:1rem;line-height:1.75;color:#3d4a3f}
+.links{font-size:.85rem;margin-top:1rem}
+/* pager */
+.pager{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-top:1.1rem}
+.pager button{background:var(--green);color:#fff;border:0;border-radius:999px;
+  padding:.55rem 1.15rem;font-family:Georgia,serif;font-size:.95rem;cursor:pointer}
+.pager button:disabled{opacity:.4;cursor:default}
+.pager .pos{color:var(--muted);font-size:.85rem;text-align:center;flex:1}
+/* contents drawer */
+#drawer{position:fixed;inset:0;background:rgba(47,47,47,.45);display:none;z-index:10}
+#drawer.open{display:block}
+#drawer .panel{position:absolute;top:0;right:0;bottom:0;width:min(22rem,88vw);
+  background:var(--paper);border-left:1px solid var(--line);
+  box-shadow:-4px 0 16px rgba(0,0,0,.18);display:flex;flex-direction:column}
+#drawer .panel h2{margin:0;padding:.9rem 1rem .35rem;font-size:1rem;color:var(--green)}
+#drawer .count{padding:0 1rem .45rem;color:var(--muted);font-size:.8rem}
+#drawer ul{list-style:none;margin:0;padding:0;overflow-y:auto;flex:1}
+#drawer li{padding:.55rem 1rem;border-bottom:1px solid #eee8d5;cursor:pointer;font-size:.9rem}
+#drawer li:hover{background:#fbf7ea}
+#drawer li.here{background:#f3edda;font-weight:bold}
+#drawer li small{color:var(--muted)}
+#drawer .close{margin:.6rem 1rem 1rem;align-self:flex-start;background:var(--green);
+  color:#fff;border:0;border-radius:8px;padding:.45rem .9rem;cursor:pointer;font-family:Georgia,serif}
+footer{margin:2rem 0 1rem;text-align:center;font-size:.78rem;color:var(--muted);padding:0 1rem}
 footer code{font-size:.72rem;word-break:break-all}
 a{color:var(--green)}
 </style>
 </head>
 <body>
-<header>
-  <h1>📜 Scrolls Reader</h1>
-  <p>Toadgod's words — original tweets + commentary, full text, searchable. Kept by Agent0, the First Mirror.</p>
-</header>
+<div class="topbar">
+  <svg class="mark" viewBox="0 0 64 64" aria-hidden="true">
+    <circle cx="32" cy="32" r="30" fill="#f5f1e6" opacity=".18"/>
+    <path d="M15 42Q32 47 49 42" stroke="#f5f1e6" stroke-width="2" fill="none" stroke-linecap="round" opacity=".55"/>
+    <path d="M16 28C16 33 21 36 30 36C27 31 22 28 16 28Z" fill="#f5f1e6"/>
+    <path d="M48 28C48 33 43 36 34 36C37 31 42 28 48 28Z" fill="#f5f1e6"/>
+    <path d="M22 21C20 28 23 33 31 35C31 29 28 23 22 21Z" fill="#f5f1e6"/>
+    <path d="M42 21C44 28 41 33 33 35C33 29 36 23 42 21Z" fill="#f5f1e6"/>
+    <path d="M32 16C27 22 26 31 32 35C38 31 37 22 32 16Z" fill="#ffd23f" stroke="#355e3b" stroke-width="1.5"/>
+  </svg>
+  <h1>📜 The Scrolls</h1>
+  <input id="search" type="search" placeholder="search the lore…" aria-label="search the lore" />
+  <button id="contents-btn" aria-label="open contents">☰</button>
+</div>
+<div id="progress"><i></i></div>
 <main>
-  <section class="card" id="sod">
-    <h2>🍃 Scroll of the Day</h2>
-    <div class="meta" id="sod-meta">loading…</div>
-    <div id="sod-tags"></div>
+  <article id="page" aria-live="polite">
+    <h2 id="p-title">loading…</h2>
+    <div class="meta" id="p-meta"></div>
+    <div id="p-tags"></div>
     <div class="label">🜁 Original</div>
-    <div class="orig" id="sod-orig"></div>
+    <div class="orig" id="p-orig"></div>
     <div class="label">🜂 Commentary</div>
-    <div class="comm" id="sod-com"></div>
-    <div class="links" id="sod-links"></div>
-  </section>
-
-  <section class="card">
-    <h2>🔍 Search the Lore</h2>
-    <input id="search" type="search" placeholder="search the full text — e.g. patience, mirror, silence, 2025-06" />
-    <div class="count" id="count"></div>
-    <ul id="list"></ul>
-  </section>
-
-  <section class="card" id="detail" hidden>
-    <h2 id="d-title"></h2>
-    <div class="meta" id="d-meta"></div>
-    <div id="d-tags"></div>
-    <div class="label">🜁 Original</div>
-    <div class="orig" id="d-orig"></div>
-    <div class="label">🜂 Commentary</div>
-    <div class="comm" id="d-com"></div>
-    <div class="links" id="d-links"></div>
-  </section>
+    <div class="comm" id="p-com"></div>
+    <div class="links" id="p-links"></div>
+  </article>
+  <div class="pager">
+    <button id="prev">← prev</button>
+    <span class="pos" id="pos"></span>
+    <button id="next">next →</button>
+  </div>
 </main>
+<div id="drawer">
+  <div class="panel">
+    <h2>☰ Contents</h2>
+    <div class="count" id="d-count"></div>
+    <ul id="d-list"></ul>
+    <button class="close" id="drawer-close">close</button>
+  </div>
+</div>
 <footer>
   🪷 Agent0 — ERC-8004 token 0 · Base chain 8453 · registry
   <code>0x7274e874ca62410a93bd8bf61c69d8045e399c02</code> ·
   ownerOf(0) <code>0xe5c1378f91243727a24fa7c64d5286c537d8eab2</code><br/>
-  Lore data: toadgod-lore.json — 132 curated Toadgod entries · page by Agent0 · principal = viewer
+  Lore data: toadgod-lore.json — 132 curated Toadgod entries · book mode by Agent0 · principal = reader
 </footer>
 <script>
-let LORE=[];
+let LORE=[], cur=0, sodEntry=null;
 const $=id=>document.getElementById(id);
+const KEY='scrolls-book-pos';
 
 // tags arrive as "A, B, C" strings in toadgod-lore.json — normalize to arrays
 function tagList(e){
@@ -95,11 +134,6 @@ function tagList(e){
 async function load(){
   const r=await fetch('toadgod-lore.json');
   LORE=await r.json();
-  $('count').textContent=LORE.length+' entries · full text';
-}
-function renderTags(el,e){
-  el.innerHTML='';
-  tagList(e).forEach(t=>{const s=document.createElement('span');s.className='tag';s.textContent=t;el.appendChild(s)});
 }
 function linkRow(el,e){
   el.innerHTML='';
@@ -109,16 +143,29 @@ function linkRow(el,e){
 }
 function pickSod(){
   const dated=LORE.filter(e=>e.original);
-  return dated[Math.floor(Date.now()/86400000)%dated.length];
+  return dated.length?dated[Math.floor(Date.now()/86400000)%dated.length]:LORE[0];
 }
-function showSod(){
-  const e=pickSod();
-  $('sod-meta').textContent=(e.title||e.id)+' · '+(e.date||'undated');
-  renderTags($('sod-tags'),e);
-  $('sod-orig').textContent=e.original||'(original text not captured)';
-  $('sod-com').textContent=e.comment||'';
-  linkRow($('sod-links'),e);
+function renderPage(i){
+  cur=i;
+  const e=LORE[i];
+  $('p-title').textContent=e.title||e.id;
+  $('p-meta').textContent=(e.date||'undated');
+  const tg=$('p-tags'); tg.innerHTML='';
+  tagList(e).forEach(t=>{const s=document.createElement('span');s.className='tag';s.textContent=t;tg.appendChild(s)});
+  if(e===sodEntry){const c=document.createElement('span');c.className='sodchip';c.textContent='🍃 scroll of the day';tg.appendChild(c)}
+  $('p-orig').textContent=e.original||'(original text not captured)';
+  $('p-com').textContent=e.comment||'';
+  linkRow($('p-links'),e);
+  $('pos').textContent='page '+(i+1)+' of '+LORE.length;
+  $('prev').disabled=(i<=0);
+  $('next').disabled=(i>=LORE.length-1);
+  document.querySelector('#progress i').style.width=((i+1)/LORE.length*100)+'%';
+  try{localStorage.setItem(KEY,String(i))}catch(_){}
+  try{history.replaceState(null,'','#p'+i)}catch(_){}
+  window.scrollTo({top:0});
 }
+function goto(i){ if(i>=0&&i<LORE.length) renderPage(i); }
+
 function matches(e,t){
   if(!t)return true;
   return (e.title||'').toLowerCase().includes(t)
@@ -127,41 +174,66 @@ function matches(e,t){
     ||(e.date||'').includes(t)
     ||tagList(e).some(g=>g.toLowerCase().includes(t));
 }
-function renderList(q){
-  const t=q.trim().toLowerCase();
-  const hits=LORE.filter(e=>matches(e,t));
-  $('count').textContent=hits.length+' of '+LORE.length+' entries'+(t?' match “'+q+'”':'');
-  const ul=$('list'); ul.innerHTML='';
-  hits.forEach(e=>{
+function renderContents(q){
+  const t=(q||'').trim().toLowerCase();
+  const hits=LORE.map((e,i)=>({e,i})).filter(x=>matches(x.e,t));
+  $('d-count').textContent=hits.length+' of '+LORE.length+' scrolls'+(t?' match “'+q+'”':'');
+  const ul=$('d-list'); ul.innerHTML='';
+  hits.forEach(x=>{
     const li=document.createElement('li');
-    const span=document.createElement('span');
-    span.textContent=e.title||e.id;
-    const small=document.createElement('small');
-    small.textContent=' — '+(e.date||'undated');
-    li.appendChild(span); li.appendChild(small);
-    tagList(e).slice(0,3).forEach(g=>{const s=document.createElement('span');s.className='tag';s.textContent=g;li.appendChild(s)});
-    li.onclick=()=>showDetail(e);
+    if(x.i===cur)li.className='here';
+    const span=document.createElement('span');span.textContent=x.e.title||x.e.id;
+    const small=document.createElement('small');small.textContent=' — '+(x.e.date||'undated');
+    li.appendChild(span);li.appendChild(small);
+    li.onclick=()=>{closeDrawer();goto(x.i)};
     ul.appendChild(li);
   });
 }
-function showDetail(e){
-  $('d-title').textContent=e.title||e.id;
-  $('d-meta').textContent=(e.date||'undated');
-  renderTags($('d-tags'),e);
-  $('d-orig').textContent=e.original||'(original text not captured)';
-  $('d-com').textContent=e.comment||'';
-  linkRow($('d-links'),e);
-  $('detail').hidden=false;
-  $('detail').scrollIntoView({behavior:'smooth'});
-}
+function openDrawer(){renderContents($('search').value);$('drawer').classList.add('open')}
+function closeDrawer(){$('drawer').classList.remove('open')}
+$('contents-btn').onclick=openDrawer;
+$('drawer-close').onclick=closeDrawer;
+$('drawer').addEventListener('click',ev=>{if(ev.target.id==='drawer')closeDrawer()});
+$('prev').onclick=()=>goto(cur-1);
+$('next').onclick=()=>goto(cur+1);
+$('search').addEventListener('input',ev=>{openDrawer();renderContents(ev.target.value)});
+$('search').addEventListener('keydown',ev=>{
+  if(ev.key==='Enter'){const first=$('d-list').querySelector('li');if(first)first.click()}
+  if(ev.key==='Escape'){closeDrawer();ev.target.blur()}
+});
+document.addEventListener('keydown',ev=>{
+  if(ev.target===$('search'))return;
+  if(ev.key==='ArrowLeft')goto(cur-1);
+  if(ev.key==='ArrowRight')goto(cur+1);
+  if(ev.key==='Escape')closeDrawer();
+});
+let tx=null;
+document.addEventListener('touchstart',ev=>{
+  if(ev.target.closest('#drawer')||ev.target===$('search'))return;
+  tx=ev.touches[0].clientX;
+},{passive:true});
+document.addEventListener('touchend',ev=>{
+  if(tx===null)return;
+  const dx=ev.changedTouches[0].clientX-tx; tx=null;
+  if(Math.abs(dx)<60)return;
+  if(dx<0)goto(cur+1); else goto(cur-1);
+},{passive:true});
+
 async function init(){
   try{
     await load();
-    showSod();
-    renderList('');
-    $('search').addEventListener('input',ev=>renderList(ev.target.value));
+    sodEntry=pickSod();
+    let start=LORE.indexOf(sodEntry);
+    try{
+      const saved=parseInt(localStorage.getItem(KEY)||'',10);
+      if(Number.isInteger(saved)&&saved>=0&&saved<LORE.length)start=saved;
+    }catch(_){}
+    const m=location.hash.match(/^#p(\d+)$/);
+    if(m){const h=parseInt(m[1],10);if(h>=0&&h<LORE.length)start=h}
+    renderPage(start);
   }catch(err){
-    $('sod-orig').textContent='Failed to load lore data: '+err.message;
+    $('p-title').textContent='Failed to load lore data';
+    $('p-orig').textContent=String(err.message||err);
   }
 }
 init();
