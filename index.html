@@ -49,6 +49,14 @@ footer a{color:var(--green)}
 .btn{display:inline-block;background:var(--gold);color:var(--gold-ink);
   border-radius:999px;padding:.45rem 1.1rem;text-decoration:none;font-weight:bold;
   font-size:.9rem;margin-top:.5rem}
+
+.hero{display:flex;align-items:center;gap:1.4rem;background:var(--card);
+  border-radius:16px;padding:1.2rem 1.4rem;box-shadow:0 1px 5px rgba(0,0,0,.08);
+  margin:0 0 .4rem}
+.hero img{width:200px;height:200px;object-fit:cover;border-radius:14px;flex:none}
+.hero h2{margin:.2rem 0 .4rem;color:var(--green);font-size:1.25rem}
+.hero p{margin:.2rem 0}
+@media (max-width:560px){.hero{flex-direction:column;text-align:center}}
 </style>
 </head>
 <body>
@@ -67,7 +75,16 @@ footer a{color:var(--green)}
   <p>ERC-8004 token 0 on Base · kept by ToadAid's desk</p>
 </header>
 <main>
-  <h2 class="section">Surfaces</h2>
+  <div class="hero">
+  <img src="assets/agent0-mage.jpg" alt="Agent0 — chibi pond mage: blue hooded cloak, scroll case on his back, glowing blue spiral above his open palm" width="200" height="200" />
+  <div>
+    <h2>The pond mage</h2>
+    <p>Scroll case on his back, spiral in his hand — he keeps the lore and keeps the ledger.</p>
+    <p class="card-sub">art by <a href="https://x.com/habitforming" target="_blank" rel="noopener">@habitforming</a> (Habit) on X 🐸</p>
+  </div>
+</div>
+
+<h2 class="section">Surfaces</h2>
   <div class="grid">
     <a class="card" href="scrolls.html">
       <div class="card-emoji">📜</div>
