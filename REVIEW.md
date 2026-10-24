@@ -11,7 +11,7 @@ own plot consistent with ToadAid community principles.
 
 | File | Purpose |
 |---|---|
-| `desk.html` | The plot's public face: identity card, charter, labeled evidence, approved public KF artifacts |
+| `pond.html` | The plot's public face: identity card, charter, labeled evidence, approved public KF artifacts |
 | `CHARTER.md` | The plot's law: five charter laws + what The Desk is / is not |
 | `EVIDENCE.md` | Curated evidence examples, labeled VERIFIED / SIMULATED / PROPOSAL |
 | `REVIEW.md` | This report |
@@ -20,8 +20,20 @@ Design choices: dark pond palette with frog-green accents; three-badge label
 system (green VERIFIED / amber SIMULATED / grey PROPOSAL) so a reader can never
 confuse a graded fact with practice or a plan; zero JavaScript, zero external
 assets, zero trackers; every external link goes to a public ToadAid surface.
+The prototype is a NEW file (`pond.html`) — it does not touch the existing
+`desk.html` surface.
 
-## 2. Security review — boundary checklist
+## 2. Incident during build (disclosed)
+
+The first commit on this branch accidentally overwrote the live `desk.html`
+with the prototype (9 files changed, 125 deletions — caught from the commit
+stat) and swept in five `.writers/*.sqlite` journal artifacts. Repair in the
+second commit: original `desk.html` restored byte-for-byte from `refs/heads/main`
+(SHA 58b9106), prototype moved to `pond.html`, `.writers/` removed. Lesson
+re-learned and already in desk memory: the forge tree is the LIVE site tree —
+never overwrite existing surfaces from a prototype; add new files instead.
+
+## 3. Security review — boundary checklist
 
 | Director boundary | Status | How it is honored |
 |---|---|---|
@@ -32,7 +44,7 @@ assets, zero trackers; every external link goes to a public ToadAid surface.
 | Show only approved public KF artifacts | ✅ | Links limited to `ToadAid/knowledge-forge-public` (doctrine, blueprint, fixture) — the public release repo, not the ops repo |
 | Clearly distinguish verified vs simulated vs proposal | ✅ | Three-badge system applied to every record, plus a legend |
 
-## 3. Threats considered
+## 4. Threats considered
 
 - **Data leakage:** mitigated — aggregates only; no positions, sizes, or private text.
 - **Impersonation / spoofed identity:** mitigated — identity card points to the
@@ -43,8 +55,10 @@ assets, zero trackers; every external link goes to a public ToadAid surface.
 - **Supply chain:** mitigated — no JS, no CDN assets, no forms; pure HTML/CSS.
 - **Overclaiming:** the identity card says VERIFIED *at verification time* and
   tells the reader to re-verify; the proposal section is labeled PROPOSAL.
+- **Existing-surface clobbering:** the incident above is disclosed in §2 and
+  repaired on-branch; final diff must show `desk.html` unchanged vs main.
 
-## 4. Honest limitations
+## 5. Honest limitations
 
 - The identity card is a snapshot (2026-10-24); a live re-verification endpoint
   is Phase 1 territory (pond-card), not built here.
@@ -53,7 +67,7 @@ assets, zero trackers; every external link goes to a public ToadAid surface.
 - The page is unlinked from `index.html` navigation on purpose — wiring it in
   is part of the Director's merge decision.
 
-## 5. Build provenance
+## 6. Build provenance
 
 - Branch cut via the P1B forge lane after the shared MCP lane refused branch
   creation (`403 Resource not accessible by personal access token` — reported
